@@ -1,0 +1,93 @@
+
+SQL*Plus: Release 11.2.0.2.0 Production on Sex Out 28 19:43:12 2022
+
+Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+
+
+Conectado.
+SQL> conn system
+Informe a senha:
+ERROR:
+ORA-28002: the password will expire within 7 days
+
+Conectado.
+SQL> alter password
+  2  ;
+alter password
+      *
+ERRO na linha 1:
+ORA-00940: comando ALTER invßlido
+
+
+SQL> alter user sys indentified by senai;
+alter user sys indentified by senai
+               *
+
+SQL> alter user sys identified by senai
+  2
+SQL> alter user sys identified by senai;
+
+Usußrio alterado.
+
+SQL> create tablespace desi_n1 logging datafile 'C:\oraclexe\app\oracle\oradata\XE\desi_n1.dbf'
+  2  size 100m
+  3  autoextend on
+  4  next 50m extent management local;
+
+Tablespace criado.
+
+SQL> create user estudante
+  2  identified by estudante
+  3  default tablespace desi_n1
+  4  quota unlimited on desi_n1;
+
+Usußrio criado.
+
+SQL> grant create session, alter session, create table, create procedure, create view, create trigger, create sequence,
+  2  create synonym to estudante;
+
+ConcessÒo bem-sucedida.
+
+SQL> conn estudante
+Informe a senha:
+Conectado.
+SQL> create table estudante (
+  2  matricula number(3) not null,
+  3  nome varchar2 (30) not null,
+  4  dt_nasc date not null
+  5  );
+
+Tabela criada.
+
+SQL> alter table estudante add constraint pk_estudante primary key (matricula);
+
+Tabela alterada.
+
+SQL>
+SQL> create table computador (
+  2  cod varchar2(4) not null,
+  3  marca varchar2(10) not null,
+  4  modelo varchar2(12) not null,
+  5  matricula number(3) not null
+  6  );
+
+Tabela criada.
+
+SQL> alter table computador add constraint pk_cod primary key (cod);
+
+Tabela alterada.
+
+SQL> desc computador
+ Nome                                      Nulo?    Tipo
+ ----------------------------------------- -------- ----------------------------
+ COD                                       NOT NULL VARCHAR2(4)
+ MARCA                                     NOT NULL VARCHAR2(10)
+ MODELO                                    NOT NULL VARCHAR2(12)
+ MATRICULA                                 NOT NULL NUMBER(3)
+
+SQL> alter table computador add constraint fk_comp_est foreign key (matricula)
+  2  references estudante(matricula);
+
+Tabela alterada.
+
+SQL>

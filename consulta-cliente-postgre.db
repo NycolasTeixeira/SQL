@@ -1,0 +1,196 @@
+-- CRIAÇÃO DE TABELAS
+
+create table funcionario(
+matricula varchar(3) NOT NULL,
+nome varchar (100) not null,
+cod_cargo varchar (3) not null references cargo
+);
+
+create table cargo(
+cod_cargo varchar(3) NOT NULL,
+nm_cargo varchar (30) not null
+);
+
+create table projeto(
+cod_proj varchar(3) NOT NULL,
+nm_proj varchar (30) not null,
+dt_fim date not null,
+cod_cli varchar(5) NOT NULL
+);
+
+create table horas(
+horas numeric (3) not null,
+matricula varchar(3) NOT NULL,
+cod_proj varchar(3) NOT NULL
+);
+
+create table cliente(
+cod_cli varchar(5) NOT NULL,
+cliente varchar (30) not null
+);
+
+-- PRIMARY KEYS
+
+--funcionario
+alter table funcionario
+add constraint pk_funcionario
+primary key (matricula);
+
+--cargo
+alter table cargo
+add constraint pk_cargo
+primary key (cod_cargo);
+
+--projeto
+alter table projeto
+add constraint pk_projeto
+primary key (cod_proj);
+
+--cliente
+alter table cliente
+add constraint pk_cliente
+primary key (cod_cli);
+
+-- FOREIGN KEYS
+
+--funcionario
+alter table funcionario
+add constraint fk_funcionario_cargo
+foreign key (cod_cargo) REFERENCES cargo (cod_cargo);
+
+--projeto
+alter table projeto
+add constraint fk_projeto_cliente
+foreign key (cod_cli) REFERENCES cliente (cod_cli);
+
+--horas
+alter table horas
+add constraint fk_horas_funcionario
+foreign key (matricula) REFERENCES funcionario (matricula);
+
+--horas
+alter table horas
+add constraint fk_horas_projeto
+foreign key (cod_proj) REFERENCES projeto (cod_proj);
+
+-- INSERTS
+
+insert into cargo (cod_cargo, nm_cargo) values 
+('1', 'Programador'),
+('2', 'Analista'),
+('3', 'Projetista');
+
+insert into funcionario (matricula, nome, cod_cargo) values
+('120','João','1'),
+('121','Hélio','1'),
+('270','Gabriel','2'),
+('273','Silva','3'),
+('274','Abraão','2'),
+('279','Carla','1'),
+('301','Ana','1'),
+('306','Manoel','3');
+
+insert into cliente (cod_cli, cliente) values
+
+('1010','Amazon'),
+('1520','Google'),
+('3355','RSET');
+
+insert into projeto (cod_proj, nm_proj, dt_fim, cod_cli) values
+('1','Alpha','17/07/2021','1010'),
+('8','Beta','12/01/2022','1520'),
+('12','Gamma','21/03/2021','3355'),
+('17','Delta','21/03/2021','3355');
+
+insert into horas (horas, matricula, cod_proj) values
+
+(37,'120','1'),
+(12,'120','8'),
+(45 ,'121','1'),
+(21 ,'121','8'),
+(107,'121','12'),
+(10,'270','8'),
+(38 ,'270','12'),
+(22 ,'273','1'),
+(31 ,'274','12'),
+(27 ,'279','1'),
+(20 ,'279','8'),
+(51 ,'279','12'),
+(16 ,'301','12'),
+(67 ,'306','17');
+
+-- A) Qual o nome dos projetos?
+
+-- SELECT nm_proj FROM projeto
+
+-- B) Qual a quantidade de funcionários?
+
+SELECT count (matricula) FROM funcionario 
+
+-- C) qual a quantidade de projetos?
+SELECT COUNT (cod_proj) FROM PROJETO;
+
+-- D) Total de horas trabalhadas por todos funcionarios
+select sum(horas) from horas;
+
+-- E) Qual nome dos funcionarios e suas respctivas matriculas?
+select matricula, nome from funcionario;
+
+-- F) Infrome o nome e a data dos projetos por ordem crescente de data
+	select nm_proj, dt_fim from projeto order by dt_fim asc;
+	
+-- G) Qual os nomes dos programadores
+select nome, nm_cargo from funcionario
+inner join cargo
+on (funcionario.cod_cargo = cargo.cod_cargo)
+where nm_cargo like 'Programador'
+
+-- H) Qual o nome dos Analistas?
+
+select f.nome, c.nm_cargo from funcionario f
+inner join cargo c
+on(f.cod_cargo = c.cod_cargo)
+where c.nm_cargo = 'Analista'
+
+-- I) Quantos projetistas trabalham para a empresa?
+
+select f.nome, c.nm_cargo from funcionario f
+inner join cargo c
+on (c.cod_cargo = f.cod_cargo )
+where c.nm_cargo = 'Projetista';
+
+
+-- J) Informe nome(s) e cargos(s) dos profissionais que atuaaram no projeto Alpha.
+
+select f.nome,c.nm_cargo,p.nm_proj from funcionario f
+join cargo c on(c.cod_cargo=f.cod_cargo)
+join horas h on(h.matricula=f.matricula)
+join projeto p on(p.cod_proj=h.cod_proj)
+where p.nm_proj like 'Alpha';
+
+-- k) Informe nome(s), cargos(s) e nome do projeto dos profissionais que atuaram no projeto Beta.
+select f.nome,c.nm_cargo,p.nm_proj from funcionario f
+join cargo c on(c.cod_cargo=f.cod_cargo)
+join horas h on(h.matricula=f.matricula)
+join projeto p on(p.cod_proj=h.cod_proj)
+where p.nm_proj like 'Beta';
+
+-- l) Informe nome(s), cargos(s) e nome do projeto dos profissionais que atuaram no projeto Gama.
+select f.nome,c.nm_cargo,p.nm_proj from funcionario f
+join cargo c on(c.cod_cargo=f.cod_cargo)
+join horas h on(h.matricula=f.matricula)
+join projeto p on(p.cod_proj=h.cod_proj)
+where p.nm_proj like 'Gamma';
+
+-- m) Informe nome(s), cargos(s) e nome do projeto dos profissionais que atuaram no projeto Delta.
+select f.nome,c.nm_cargo,p.nm_proj from funcionario f
+join cargo c on(c.cod_cargo=f.cod_cargo)
+join horas h on(h.matricula=f.matricula)
+join projeto p on(p.cod_proj=h.cod_proj)
+where p.nm_proj like 'Delta';
+
+-- n) Informe o cargo e quantos funcionários possui em cada cargo.
+
+select c.nm_cargo,count(c.cod_cargo) from cargo c
+join funcionario f on(c.cod_cargo=f.cod_cargo)
+group by c.nm_cargo order by c.nm_cargo;
